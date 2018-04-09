@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Bootstrap 3, from LayoutIt!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!--link rel="stylesheet/less" href="less/bootstrap.less" type="text/css" /-->
+    <!--link rel="stylesheet/less" href="less/responsive.less" type="text/css" /-->
+    <!--script src="js/less-1.3.3.min.js"></script-->
+    <!--append ‘#!watch’ to the browser URL, then refresh the page. -->
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/jquery-ui.css" rel="stylesheet">
+    <link href="css/datepicker3.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="js/upload/css/jquery.fileupload.css" rel="stylesheet">
+    <link href="js/upload/css/jquery.fileupload-ui.css" rel="stylesheet">
+
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+  <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="img/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="img/favicon.png">
+
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="js/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="js/ckeditor/ckeditor.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+    <script>
+        function initialize() {
+            var location;
+            var mapProp = {
+                center: new google.maps.LatLng(-7.820951, 112.005936),
+                zoom: 12,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+
+            var citMarker = new google.maps.Marker({
+                position: new google.maps.LatLng(51.885403000000000000, -8.534554100000037000)
+            });
+
+            var infowindow = new google.maps.InfoWindow({
+                content: ""
+            });
+
+            google.maps.event.addListener(citMarker, 'click', function() {
+                map.setZoom(15);
+                map.setCenter(citMarker.getPosition());
+                infowindow.open(map, citMarker);
+            });
+
+            google.maps.event.addListener(map, 'click', function(event) {
+                location = event.latLng;
+                var lat = location.lat();
+                var long = location.lng();
+                infowindow.content = 'Latitude: ' + location.lat() + '<br>Longitude: ' + location.lng();
+                citMarker.position = location;
+                citMarker.setMap(map);
+            });
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+    <script>
+        $(function() {
+            $("#tglLahir").datepicker({
+                format: "dd/mm/yyyy",
+                language: "id",
+                autoclose: true
+            });
+        });
+    </script>
+
+    <script id="template-upload" type="text/x-tmpl">
+        {% for (var i=0, file; file=o.files[i]; i++) { %}
+        <tr class="template-upload fade">
+            <td>
+                <span class="preview"></span>
+            </td>
+            <td>
+                <p class="name">{%=file.name%}</p>
+                <strong class="error text-danger"></strong>
+            </td>
+            <td>
+                <p class="size">Processing...</p>
+                <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                </div>
+            </td>
+            <td>
+                {% if (!i && !o.options.autoUpload) { %}
+                <button class="btn btn-primary start" disabled>
+                    <i class="glyphicon glyphicon-upload"></i>
+                    <span>Start</span>
+                </button>
+                {% } %} {% if (!i) { %}
+                <button class="btn btn-warning cancel">
+                    <i class="glyphicon glyphicon-ban-circle"></i>
+                    <span>Cancel</span>
+                </button>
+                {% } %}
+            </td>
+        </tr>
+        {% } %}
+    </script>
+    <!-- The template to display files available for download -->
+    <script id="template-download" type="text/x-tmpl">
+        {% for (var i=0, file; file=o.files[i]; i++) { %}
+        <tr class="template-download fade">
+            <td>
+                <span class="preview">
+                {% if (file.thumbnailUrl) { %}
+                    <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery><img src="{%=file.thumbnailUrl%}"></a>
+                {% } %}
+            </span>
+            </td>
+            <td>
+                <p class="name">
+                    {% if (file.url) { %}
+                    <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl? 'data-gallery': ''%}>{%=file.name%}</a>
+                    {% } else { %}
+                    <span>{%=file.name%}</span>
+                    {% } %}
+                </p>
+                {% if (file.error) { %}
+                <div><span class="label label-danger">Error</span> {%=file.error%}</div>
+                {% } %}
+            </td>
+            <td>
+                <span class="size">{%=o.formatFileSize(file.size)%}</span>
+            </td>
+            <td>
+                {% if (file.deleteUrl) { %}
+                <button class="btn btn-danger delete" data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}" {% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}' {% } %}>
+                    <i class="glyphicon glyphicon-trash"></i>
+                    <span>Delete</span>
+                </button>
+                <input type="checkbox" name="delete" value="1" class="toggle">{% } else { %}
+                <button class="btn btn-warning cancel">
+                    <i class="glyphicon glyphicon-ban-circle"></i>
+                    <span>Cancel</span>
+                </button>
+                {% } %}
+            </td>
+        </tr>
+        {% } %}
+    </script>
+
+
+    <script src="js/upload/js/vendor/jquery.ui.widget.js"></script>
+
+    <script src="http://blueimp.github.io/JavaScript-Templates/js/tmpl.min.js"></script>
+
+    <script src="http://blueimp.github.io/JavaScript-Load-Image/js/load-image.min.js"></script>
+
+    <script src="http://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>
+
+
+    <script src="http://blueimp.github.io/Gallery/js/jquery.blueimp-gallery.min.js"></script>
+
+    <script src="js/upload/js/jquery.iframe-transport.js"></script>
+
+    <script src="js/upload/js/jquery.fileupload.js"></script>
+
+    <script src="js/upload/js/jquery.fileupload-process.js"></script>
+
+    <script src="js/upload/js/jquery.fileupload-image.js"></script>
+
+    <script src="js/upload/js/jquery.fileupload-audio.js"></script>
+
+    <script src="js/upload/js/jquery.fileupload-video.js"></script>
+
+    <script src="js/upload/js/jquery.fileupload-validate.js"></script>
+
+    <script src="js/upload/js/jquery.fileupload-ui.js"></script>
+
+    <!-- <script src="js/upload/js/main.js"></script> -->
+
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <nav class="navbar navbar-default" role="navigation">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#">Sistem Layanan Pengaduan Masyarakat</a>
+                    </div>
+
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="active">
+                                <a href="#">Beranda</a>
+                            </li>
+                            <li>
+                                <a href="#">Tentang Kami</a>
+                            </li>
+                            <li>
+                                <a>&#9742 (0341) 4432-123</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </nav>
+            </div>
+        </div>
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <form class="well" role="form">
+                    <div class="form-group">
+                        <label for="nomerIdent">Nomor Identitas (KTP/SIM/Paspor)</label>
+                        <input type="text" class="form-control" id="nomerIdent">
+                    </div>
+                    <div class="form-group">
+                        <label for="nama">Nama</label>
+                        <input type="text" class="form-control" id="nama">
+                    </div>
+                    <div class="form-group">
+                        <label for="nama">Email (Optional)</label>
+                        <input type="email" class="form-control" id="email">
+                        <p><i>*Jika email disini maka, </i>
+                        </p>
+                    </div>
+                    <label for="tglLahir">Tgl Lahir</label>
+                    <div class="form-group input-group date">
+                        <input id="tglLahir" type="text" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                    </div>
+                    <!-- <div class="form-group">
+                        <label for="tglLahir">Tgl Lahir</label>
+                        <input type="text" class="form-control" id="tglLahir">
+                    </div> -->
+                    <!-- <div class="btn-group dropdown">
+                        <button class="btn btn-default">Pilih kecamatan</button>
+                        <button data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="#">Kediri Kota</a>
+                            </li>
+                            <li>
+                                <a href="#">Mojoroto</a>
+                            </li>
+                            <li>
+                                <a href="#">Pesantren</a>
+                            </li>
+                        </ul>
+                    </div> -->
+                    <div class="form-group">
+                        <label>Tempat Terjadi</label>
+                        <div id="googleMap" style="width:500px;height:380px;"></div>
+                    </div>
+
+                    <!-- <div class="btn-group dropdown">
+                        <button class="btn btn-default">Pilih Kelurahan</button>
+                        <button data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="#">Semampir</a>
+                            </li>
+                            <li>
+                                <a href="#">Dandangan</a>
+                            </li>
+                            <li>
+                                <a href="#">Ngadirejo</a>
+                            </li>
+                        </ul>
+                    </div> -->
+
+                    <div class="form-group">
+                        <label for="judulKeluhan">Topik Pengaduan Anda</label>
+                        <input type="text" class="form-control" id="judulKeluhan">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pilih Kategori</label>
+                        <select class="form-control">
+                            <option>Dinas Pendidikan</option>
+                            <option>Dinas Kesehatan</option>
+                            <option>Dinas Perhubungan &amp; Komunikasi</option>
+                            <option>Dinas Kebudayaan, Pariwisata, Pemuda dan Olahraga</option>
+                            <option>Dinas Pekerjaan Umum</option>
+                            <option>Dinas Koperasi, Usaha Mikro, Kecil, dan Menengah</option>
+                            <option>Dinas Pertanian</option>
+                            <option>Dinas Sosial dan Tenaga Kerja</option>
+                            <option>Dinas Perindustrian, Tambang, dan Energi</option>
+                            <option>Dinas Pendapatan, Pengeluaran, Keuangan dan Aset</option>
+                            <option>Dinas Kependudukan dan Catatan Sipil</option>
+                            <option>Dinas Tata Ruang, Kebersihan, dan Pertamanan</option>
+                        </select>
+                    </div>
+
+                    <!-- <div class="btn-group dropdown">
+                        <button class="btn btn-default">Pilih Kategori</button>
+                        <button data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="#">Dinas Kebersihan dan Pertamanan</a>
+                            </li>
+                            <li>
+                                <a href="#">Dinas Pertanian</a>
+                            </li>
+                        </ul>
+                    </div> -->
+
+                    <div class="form-group">
+                        <label for="isiKeluhan">Isi Pengaduan Anda</label>
+                        <textarea class="ckeditor" name="editor1"></textarea>
+                        <!-- <textarea placeholder="Isi keluhan disini" class="form-control" rows="5"></textarea> -->
+                    </div>
+
+
+
+                    <!-- <div class="form-group">
+                     <label for="deadline">Batas Waktu Pengaduan</label><input type="date" class="form-control" id="deadline">
+                </div> -->
+
+                </form>
+                <label>Lampirkan Berkas</label>
+                <form id="fileupload" action="//jquery-file-upload.appspot.com/" method="POST" enctype="multipart/form-data">
+                    <!-- Redirect browsers with JavaScript disabled to the origin page -->
+                    <noscript>
+                        <input type="hidden" name="redirect" value="http://blueimp.github.io/jQuery-File-Upload/">
+                    </noscript>
+                    <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+                    <div class="row fileupload-buttonbar">
+                        <div class="col-lg-7">
+                            <!-- The fileinput-button span is used to style the file input field as button -->
+                            <span class="btn btn-success fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>Add files...</span>
+                            <input type="file" name="files[]" multiple>
+                            </span>
+                            <button type="submit" class="btn btn-primary start">
+                                <i class="glyphicon glyphicon-upload"></i>
+                                <span>Start upload</span>
+                            </button>
+                            <button type="reset" class="btn btn-warning cancel">
+                                <i class="glyphicon glyphicon-ban-circle"></i>
+                                <span>Cancel upload</span>
+                            </button>
+                            <button type="button" class="btn btn-danger delete">
+                                <i class="glyphicon glyphicon-trash"></i>
+                                <span>Delete</span>
+                            </button>
+                            <input type="checkbox" class="toggle">
+                            <!-- The global file processing state -->
+                            <span class="fileupload-process"></span>
+                        </div>
+                        <!-- The global progress state -->
+                        <div class="col-lg-5 fileupload-progress fade">
+                            <!-- The global progress bar -->
+                            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                            </div>
+                            <!-- The extended global progress state -->
+                            <div class="progress-extended">&nbsp;</div>
+                        </div>
+                    </div>
+                    <!-- The table listing the files available for upload/download -->
+                    <table role="presentation" class="table table-striped">
+                        <tbody class="files"></tbody>
+                    </table>
+                </form>
+                <button type="submit" class="btn btn-primary">Kirim</button>
+                <!-- <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" data-filter=":even">
+    <div class="slides"></div>
+    <h3 class="title"></h3>
+    <a class="prev">‹</a>
+    <a class="next">›</a>
+    <a class="close">×</a>
+    <a class="play-pause"></a>
+    <ol class="indicator"></ol>
+</div> -->
+
+                <hr>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

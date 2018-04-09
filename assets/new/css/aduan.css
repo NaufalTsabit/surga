@@ -1,0 +1,158 @@
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    background: red;
+    cursor: inherit;
+    display: block;
+}
+input[readonly] {
+    background-color: white !important;
+    cursor: text !important;
+}
+/*form styles*/
+#msform {
+    margin: 0px auto;
+    position: relative;
+}
+#msform fieldset {
+    display: block;
+    border: 0 none;
+    box-sizing: border-box;
+    width: 100%;
+    /*stacking fieldsets above each other*/
+    position: absolute;
+    
+    /*margin-bottom: 40px;*/
+    /*background: white;*/
+    /*border-radius: 4px;*/
+    /*box-shadow: 0 1px 5px 1px rgba(0, 0, 0, 0.1);*/
+    /*padding: 20px 30px;*/
+}
+/*Hide all except first fieldset*/
+#msform fieldset:not(:first-of-type) {
+    display: none;
+}
+#msform input.warning {
+    border: 1px solid #da4453;
+}
+#msform textarea.warning {
+    border: 1px solid #da4453;
+}
+#msform div.warning {
+    border: 1px solid #da4453;
+}
+#msform select.warning {
+    border: 1px solid #da4453;
+}
+#msform select#metade.warning {
+    border: 1px solid #da4453;
+}
+/*inputs */
+#msform select#metade{
+  color:#808080;
+  padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    width: 49%;
+    box-sizing: border-box;
+  font-size: 13px;
+}
+#msform select{
+  color:#808080;
+  padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  font-size: 13px;
+}
+
+
+#msform option:not(:disabled){
+  color:#2C3E50;
+}
+
+/*headings*/
+.fs-title {
+    text-transform: uppercase;
+    color: #2C3E50;
+}
+.fs-subtitle {
+    font-weight: normal;
+    color: #666;
+    margin-bottom: 20px;
+}
+/*progressbar*/
+#progressbar {
+    margin-bottom: 30px;
+    overflow: hidden;
+    /*CSS counters to number the steps*/
+    counter-reset: step;
+}
+#progressbar li {
+    list-style-type: none;
+    color: #50c1e9;
+    text-transform: uppercase;
+    font-size: 13px;
+    width: 33.33%;
+    float: left;
+    position: relative;
+    text-align: center;
+}
+#progressbar li:before {
+    content: counter(step);
+    counter-increment: step;
+    width: 24px;
+    line-height: 21px;
+    display: block;
+    font-size: 13px;
+    color: #50c1e9;
+    background: white;
+    border-radius: 3px;
+    margin: 0 auto 5px auto;
+}
+/*progressbar connectors*/
+#progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: white;
+    position: absolute;
+    left: -50%;
+    top: 9px;
+    z-index: -1; /*put it behind the numbers*/
+}
+#progressbar li:first-child:after {
+    /*connector not needed before the first step*/
+    content: none; 
+}
+/*marking active/completed steps green*/
+/*The number of the step and the connector before it = green*/
+#progressbar li.active:before,  #progressbar li.active:after{
+    background: #50c1e9;
+    color: white;
+}
+/*RESUMO*/
+#resumo {
+  padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    color: #2C3E50;
+    font-size: 13px;
+}
